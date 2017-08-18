@@ -10,7 +10,6 @@ namespace GunsofIcarusLogTool
         public FormMain()
         {
             InitializeComponent();
-            App.CreateFolders();
             SetComponents();
             GameStatus gameStatus = new GameStatus();
             Debug.WriteLine("baseDir: " + App.baseDir);

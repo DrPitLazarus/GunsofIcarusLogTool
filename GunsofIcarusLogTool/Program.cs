@@ -11,6 +11,16 @@ namespace GunsofIcarusLogTool
         [STAThread]
         static void Main()
         {
+            bool firstInstance;
+            var mutex = new System.Threading.Mutex(true, "GunsofIcarusLogTool", out firstInstance);
+
+            if (!firstInstance)
+            {
+                ErrorMessage.ShowAlertMessage("Guns of Icarus Log Tool is already running.\n" +
+                    "Maybe it's in the notification tray?", "Already running");
+                return;
+            }
+            
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
@@ -32,7 +42,8 @@ namespace GunsofIcarusLogTool
             {
                 Application.Run(new FormMain());
             }
-            
+
+            GC.KeepAlive(mutex);
         }
     }
 }
