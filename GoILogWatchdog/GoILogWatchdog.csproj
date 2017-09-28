@@ -73,7 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
-    <Compile Include="AutosaveResult.cs" />
+    <Compile Include="FileSaveResult.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="FormMain.cs">
       <SubType>Form</SubType>

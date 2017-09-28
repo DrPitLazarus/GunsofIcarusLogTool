@@ -8,7 +8,7 @@ namespace GoILogWatchdog
     {
         public bool isRunning = false;
         public Timer timer;
-        private readonly string processName = "calculator";
+        private readonly string processName = App.GoIProcessName;
         private FormMain theForm;
 
         public GameState(FormMain theForm)
@@ -47,10 +47,10 @@ namespace GoILogWatchdog
         {
             isRunning = false;
             Debug.WriteLine("GameState.Process_Exited()");
-            AutosaveResult result = App.AutosaveLog();
+            FileSaveResult result = App.AutosaveLog();
             if (result.Success && Config.GetBool("notify_autosave"))
             {
-                this.theForm.ShowNotif(string.Format("Autosaved log as '{0}'", result.Filename));
+                this.theForm.ShowNotification(string.Format("Autosaved log as '{0}'", result.Filename));
             }
             timer.Enabled = true;
         }

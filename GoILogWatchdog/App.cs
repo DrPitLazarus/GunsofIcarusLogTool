@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -11,8 +12,11 @@ namespace GoILogWatchdog
         public static readonly string BaseDirectory = @"C:\Steam\steamapps\common\Guns of Icarus Online\GoILogWatchdog\";
         //public static readonly string BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         public static readonly string GoIDirectory = Path.GetFullPath(Path.Combine(BaseDirectory, @"..\"));
+        public static readonly string OutputLogPath = @"GunsOfIcarusOnline_data\output_log.txt";
         public static readonly string Title = "GoI Log Watchdog";
         public static readonly string Name = "GoILogWatchdog";
+        public static readonly string ConfigFile = "config.ini";
+        public static readonly string GoIProcessName = "GunsOfIcarusOnline";
 
         /// <summary>
         /// Returns true if GunsOfIcarusOnline.exe exists.
@@ -20,41 +24,45 @@ namespace GoILogWatchdog
         /// <returns></returns>
         public static bool IsGoIValid()
         {
-            if (File.Exists(GoIDirectory + "GunsOfIcarusOnline.exe"))
-                return true;
-            else
-                return false;
+            return File.Exists(GoIDirectory + "GunsOfIcarusOnline.exe");
         }
 
-        private static void CreateAutosaveFolder()
+        /// <summary>
+        /// Creates the folder structure for the log files.
+        /// </summary>
+        public static void CreateFolders()
         {
-            if (!Directory.Exists(BaseDirectory + "autosave"))
+            string[] list = new string[] { "autosave", "bug", "crash" };
+            foreach (string folder in list)
             {
-                Directory.CreateDirectory(BaseDirectory + "autosave");
-                Debug.WriteLine("App.CreateAutosaveFolder(): Created autosave folder.");
+                if (!Directory.Exists(BaseDirectory + folder))
+                {
+                    Directory.CreateDirectory(BaseDirectory + folder);
+                    Debug.WriteLine(string.Format("App.CreateFolders(): Created folder {0}.", folder));
+                }
             }
         }
 
-        public static AutosaveResult AutosaveLog()
+        public static FileSaveResult AutosaveLog()
         {
-            CreateAutosaveFolder();
-            string filename = "output_log " + LogLastWrite().ToString().Replace(":", "") + ".txt";
+            CreateFolders();
+            string filename = "output_log " + GetLogLastWrite().ToString().Replace(":", "") + ".txt";
             try
             {
                 File.Copy(
-                    GoIDirectory + @"GunsOfIcarusOnline_Data\output_log.txt",
+                    GoIDirectory + OutputLogPath,
                     BaseDirectory + @"autosave\" + filename,
                     true
                 );
                 Debug.WriteLine("App.AutosaveLog(): Autosaved as " + filename);
                 TrimAutosaveFiles();
-                return new AutosaveResult { Success = true, Filename = filename };
+                return new FileSaveResult { Success = true, Filename = filename };
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 //TODO: better exception handling.
-                return new AutosaveResult { Success = false };
+                return new FileSaveResult { Success = false };
             }
         }
 
@@ -62,9 +70,9 @@ namespace GoILogWatchdog
         /// Returns a DateTime of the last write date of the game log file.
         /// </summary>
         /// <returns></returns>
-        public static DateTime LogLastWrite()
+        public static DateTime GetLogLastWrite()
         {
-            return File.GetLastWriteTime(GoIDirectory + @"GunsOfIcarusOnline_data\output_log.txt");
+            return File.GetLastWriteTime(GoIDirectory + OutputLogPath);
         }
 
         /// <summary>
@@ -80,7 +88,7 @@ namespace GoILogWatchdog
                 if (filesInDirectory > limit)
                 {
                     int deletedCounter = 0;
-                    foreach (var file in directory.GetFiles().OrderByDescending(x => x.LastWriteTime)
+                    foreach (var file in directory.GetFiles().OrderByDescending(f => f.LastWriteTime)
                         .Skip(limit))
                     {
                         file.Delete();
@@ -90,6 +98,96 @@ namespace GoILogWatchdog
                         "Limit: {0}, Count: {1}, Deleted: {2}", limit, filesInDirectory, deletedCounter));
                 }
             }
+        }
+
+        /// <summary>
+        /// Copies the last saved log in autosave to the bug or crash folder.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static FileSaveResult MarkLastLogAs(string type)
+        {
+            CreateFolders();
+            FileInfo lastLog = GetLastLog() ?? throw new FileNotFoundException("There are no logs in autosave.");
+            string destPath = BaseDirectory;
+            switch (type)
+            {
+                case "bug":
+                    destPath += type;
+                    break;
+                case "crash":
+                    destPath += type;
+                    break;
+                default:
+                    return new FileSaveResult { Success = false, Message = "Invalid type to mark as." };
+            }
+            destPath += "\\";
+            try
+            {
+                File.Copy(
+                    lastLog.FullName,
+                    destPath + lastLog.Name,
+                    true);
+                Debug.WriteLine(string.Format("App.MarkLastLogAs(): Marked '{0}' as {1}.", lastLog.Name, type));
+                return new FileSaveResult
+                {
+                    Success = true,
+                    Filename = lastLog.Name,
+                    Type = type,
+                    Message = string.Format("Marked '{0}' as {1}.", lastLog.Name, type)
+                };
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                //TODO: better exception handling.
+                return new FileSaveResult { Success = false, Message = string.Format("Failed to mark as {0}.", type) };
+            }
+        }
+
+        /// <summary>
+        /// Returns the last log in autosave. Returns null if not found.
+        /// </summary>
+        /// <returns></returns>
+        private static FileInfo GetLastLog()
+        {
+            var directory = new DirectoryInfo(BaseDirectory + "autosave");
+            if (directory.GetFiles().Length == 0)
+            {
+                return null;
+            }
+            var file = directory.GetFiles().OrderByDescending(f => f.LastWriteTime).First();
+            return file;
+        }
+
+        /// <summary>
+        /// Creates or removes autorun entry in registry.
+        /// </summary>
+        /// <param name="enabled"></param>
+        public static void SetStartOnLogin(bool enabled)
+        {
+            RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
+            if (enabled)
+            {
+                key.SetValue(Name, string.Format("\"{0}{1}.exe\"", BaseDirectory, Name));
+            }
+            else
+            {
+                key.DeleteValue(Name, false);
+            }
+        }
+
+        /// <summary>
+        /// Checks if the program is in the current user's run registry key.
+        /// </summary>
+        /// <returns></returns>
+        public static bool CheckStartOnLogin()
+        {
+            RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run");
+            if (key.GetValue(Name) == null)
+                return false;
+            else
+                return true;
         }
     }
 }
