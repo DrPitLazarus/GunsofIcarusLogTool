@@ -18,13 +18,11 @@ namespace GoILogWatchdog
         {
             notifyIcon.Icon = Icon;
 
-            labelProductName.Text = App.Title;
+            groupBoxAbout.Text = App.Title;
             labelVersion.Text = "v" + Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            
+            /* Update UI with current settings. */
             if (Config.GetBool("start_in_tray"))
                 checkBoxStartInTray.Checked = true;
-            else
-                checkBoxNotifyStartup.Enabled = false;
             checkBoxStartInTray.CheckedChanged += SettingsCheckbox_Changed;
 
             if (Config.GetBool("notify_startup"))
@@ -36,8 +34,18 @@ namespace GoILogWatchdog
             checkBoxNotifyAutosave.CheckedChanged += SettingsCheckbox_Changed;
 
             if (App.CheckStartOnLogin())
-                checkBox1.Checked = true;
-            checkBox1.CheckedChanged += SettingsStartOnLogin_CheckedChanged;
+                checkBoxStartOnLogin.Checked = true;
+            checkBoxStartOnLogin.CheckedChanged += SettingsStartOnLogin_CheckedChanged;
+
+            /* Scrolls activity text down when not visible. */
+            textBoxActivity.VisibleChanged += (sender, e) =>
+            {
+                if (textBoxActivity.Visible)
+                {
+                    textBoxActivity.SelectionStart = textBoxActivity.TextLength;
+                    textBoxActivity.ScrollToCaret();
+                }
+            };
 
             AppendActivityText(App.Title + " started.");
         }
@@ -124,15 +132,7 @@ namespace GoILogWatchdog
             string key = checkbox.Tag.ToString();
             string isChecked = checkbox.Checked.ToString().ToLower();
             Config.Set(key, isChecked);
-        }
-
-        private void checkBoxStartInTray_CheckedChanged(object sender, EventArgs e)
-        {
-            var checkbox = sender as CheckBox;
-            if (checkbox.Checked)
-                checkBoxNotifyStartup.Enabled = true;
-            else
-                checkBoxNotifyStartup.Enabled = false;
+            AppendActivityText(string.Format("Setting \"{0}\" updated to {1}.", key, isChecked));
         }
 
         private void SettingsStartOnLogin_CheckedChanged(object sender, EventArgs e)
@@ -142,7 +142,10 @@ namespace GoILogWatchdog
                 App.SetStartOnLogin(true);
             else
                 App.SetStartOnLogin(false);
+            AppendActivityText(string.Format("Setting \"start_on_login\" updated to {0}.", checkbox.Checked.ToString().ToLower()));
         }
+
+
 #endregion
 
 #region About Tab Events
@@ -165,6 +168,7 @@ namespace GoILogWatchdog
             {
                 FileSaveResult result = App.MarkLastLogAs("bug");
                 ShowNotification(result.Message);
+                AppendActivityText(result.Message);
             }
             catch (FileNotFoundException ex)
             {
@@ -178,6 +182,7 @@ namespace GoILogWatchdog
             {
                 FileSaveResult result = App.MarkLastLogAs("crash");
                 ShowNotification(result.Message);
+                AppendActivityText(result.Message);
             }
             catch (FileNotFoundException ex)
             {
@@ -195,6 +200,11 @@ namespace GoILogWatchdog
             Show();
             this.WindowState = FormWindowState.Normal;
         }
-#endregion
+        #endregion
+
+        private void buttonOpenWatchdogFolder_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(App.BaseDirectory);
+        }
     }
 }

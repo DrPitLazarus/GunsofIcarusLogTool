@@ -9,8 +9,8 @@ namespace GoILogWatchdog
 {
     public static class App
     {
-        //public static readonly string BaseDirectory = @"C:\Steam\steamapps\common\Guns of Icarus Online\GoILogWatchdog\";
-        public static readonly string BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        public static readonly string BaseDirectory = @"C:\Steam\steamapps\common\Guns of Icarus Online\GoILogWatchdog\";
+        //public static readonly string BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         public static readonly string GoIDirectory = Path.GetFullPath(Path.Combine(BaseDirectory, @"..\"));
         public static readonly string OutputLogPath = @"GunsOfIcarusOnline_data\output_log.txt";
         public static readonly string Title = "GoI Log Watchdog";
@@ -128,7 +128,7 @@ namespace GoILogWatchdog
                     lastLog.FullName,
                     destPath + lastLog.Name,
                     true);
-                Debug.WriteLine(string.Format("App.MarkLastLogAs(): Marked '{0}' as {1}.", lastLog.Name, type));
+                Debug.WriteLine(string.Format("App.MarkLastLogAs(): Marked \"{0}\" as {1}.", lastLog.Name, type));
                 return new FileSaveResult
                 {
                     Success = true,
