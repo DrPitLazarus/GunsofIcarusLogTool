@@ -40,6 +40,7 @@
             this.toolStripMenuItemExit = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPageSettings = new System.Windows.Forms.TabPage();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.checkBoxNotifyAutosave = new System.Windows.Forms.CheckBox();
             this.checkBoxNotifyStartup = new System.Windows.Forms.CheckBox();
             this.checkBoxStartInTray = new System.Windows.Forms.CheckBox();
@@ -49,11 +50,16 @@
             this.label2 = new System.Windows.Forms.Label();
             this.labelVersion = new System.Windows.Forms.Label();
             this.labelProductName = new System.Windows.Forms.Label();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.tabPageStatus = new System.Windows.Forms.TabPage();
+            this.labelGameState = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.textBoxActivity = new System.Windows.Forms.TextBox();
             this.contextMenuStrip.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.tabPageSettings.SuspendLayout();
             this.tabPageAbout.SuspendLayout();
+            this.tabPageStatus.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // notifyIcon
@@ -119,6 +125,7 @@
             // 
             // tabControl
             // 
+            this.tabControl.Controls.Add(this.tabPageStatus);
             this.tabControl.Controls.Add(this.tabPageSettings);
             this.tabControl.Controls.Add(this.tabPageAbout);
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -141,6 +148,16 @@
             this.tabPageSettings.TabIndex = 0;
             this.tabPageSettings.Text = "Settings";
             this.tabPageSettings.UseVisualStyleBackColor = true;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(8, 75);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(91, 17);
+            this.checkBox1.TabIndex = 3;
+            this.checkBox1.Text = "Start on login.";
+            this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // checkBoxNotifyAutosave
             // 
@@ -245,15 +262,49 @@
             this.labelProductName.TabIndex = 0;
             this.labelProductName.Text = "GoI Log Watchdog";
             // 
-            // checkBox1
+            // tabPageStatus
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(8, 75);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(91, 17);
-            this.checkBox1.TabIndex = 3;
-            this.checkBox1.Text = "Start on login.";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.tabPageStatus.Controls.Add(this.labelGameState);
+            this.tabPageStatus.Controls.Add(this.groupBox2);
+            this.tabPageStatus.Location = new System.Drawing.Point(4, 22);
+            this.tabPageStatus.Name = "tabPageStatus";
+            this.tabPageStatus.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageStatus.Size = new System.Drawing.Size(276, 235);
+            this.tabPageStatus.TabIndex = 2;
+            this.tabPageStatus.Text = "Status";
+            this.tabPageStatus.UseVisualStyleBackColor = true;
+            // 
+            // labelGameState
+            // 
+            this.labelGameState.AutoSize = true;
+            this.labelGameState.Location = new System.Drawing.Point(8, 6);
+            this.labelGameState.Margin = new System.Windows.Forms.Padding(3);
+            this.labelGameState.Name = "labelGameState";
+            this.labelGameState.Size = new System.Drawing.Size(104, 13);
+            this.labelGameState.TabIndex = 0;
+            this.labelGameState.Text = "Game is not running.";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.textBoxActivity);
+            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.groupBox2.Location = new System.Drawing.Point(3, 68);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(270, 164);
+            this.groupBox2.TabIndex = 2;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Activity";
+            // 
+            // textBoxActivity
+            // 
+            this.textBoxActivity.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxActivity.Location = new System.Drawing.Point(3, 16);
+            this.textBoxActivity.Multiline = true;
+            this.textBoxActivity.Name = "textBoxActivity";
+            this.textBoxActivity.ReadOnly = true;
+            this.textBoxActivity.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBoxActivity.Size = new System.Drawing.Size(264, 145);
+            this.textBoxActivity.TabIndex = 0;
             // 
             // FormMain
             // 
@@ -275,6 +326,10 @@
             this.tabPageSettings.PerformLayout();
             this.tabPageAbout.ResumeLayout(false);
             this.tabPageAbout.PerformLayout();
+            this.tabPageStatus.ResumeLayout(false);
+            this.tabPageStatus.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -301,6 +356,10 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemCrash;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.TabPage tabPageStatus;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label labelGameState;
+        private System.Windows.Forms.TextBox textBoxActivity;
     }
 }
 

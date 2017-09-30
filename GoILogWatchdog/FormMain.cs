@@ -7,6 +7,7 @@ namespace GoILogWatchdog
 {
     public partial class FormMain : Form
     {
+
         public FormMain()
         {
             InitializeComponent();
@@ -38,16 +39,31 @@ namespace GoILogWatchdog
             if (App.CheckStartOnLogin())
                 checkBox1.Checked = true;
             checkBox1.CheckedChanged += SettingsStartOnLogin_CheckedChanged;
+
+            AppendActivityText(App.Title + " started.");
+        }
+
+        public void AppendActivityText(string message)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action<string>(AppendActivityText), new object[] { message });
+                return;
+            }
+            string timestamp = DateTime.Now.ToLongTimeString();
+            textBoxActivity.AppendText(string.Format("{0}> {1}\r\n", timestamp, message));
         }
 
         public void ShowNotification(string message)
         {
             if (InvokeRequired)
             {
-                this.Invoke(new Action<string>(ShowNotification), new object[] { message });
+                Invoke(new Action<string>(ShowNotification), new object[] { message });
+                return;
             }
             notifyIcon.ShowBalloonTip(3000, App.Title, message, ToolTipIcon.None);
         }
+
 #region General Form Events
         private void FormMain_Shown(object sender, EventArgs e)
         {
