@@ -38,19 +38,25 @@ namespace GoILogWatchdog
             if (process.Length == 0) return;
             // Set exited event handler and set isRunning.
             process[0].EnableRaisingEvents = true;
-            process[0].Exited += new EventHandler(Process_Exited);
+            process[0].Exited += Process_Exited;
             isRunning = true;
             timer.Enabled = false;
+            theForm.AppendActivityText("Game is now running.");
+            theForm.UpdateGameStateLabel(isRunning);
         }
 
         private void Process_Exited(object sender, EventArgs e)
         {
             isRunning = false;
             Debug.WriteLine("GameState.Process_Exited()");
+            theForm.AppendActivityText("Game has exited.");
+            theForm.UpdateGameStateLabel(isRunning);
             FileSaveResult result = App.AutosaveLog();
-            if (result.Success && Config.GetBool("notify_autosave"))
+            if (result.Success)
             {
-                this.theForm.ShowNotification(string.Format("Autosaved log as '{0}'", result.Filename));
+                theForm.AppendActivityText(string.Format("Autosaved \"{0}\"", result.Filename));
+                if (Config.GetBool("notify_autosave"))
+                    theForm.ShowNotification(string.Format("Autosaved log as '{0}'", result.Filename));
             }
             timer.Enabled = true;
         }

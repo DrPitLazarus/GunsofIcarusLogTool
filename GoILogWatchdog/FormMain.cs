@@ -7,7 +7,6 @@ namespace GoILogWatchdog
 {
     public partial class FormMain : Form
     {
-
         public FormMain()
         {
             InitializeComponent();
@@ -52,6 +51,20 @@ namespace GoILogWatchdog
             }
             string timestamp = DateTime.Now.ToLongTimeString();
             textBoxActivity.AppendText(string.Format("{0}> {1}\r\n", timestamp, message));
+        }
+
+        public void UpdateGameStateLabel(bool state)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action<bool>(UpdateGameStateLabel), new object[] { state });
+                return;
+            }
+            string message = "Game is ";
+            if (!state)
+                message += "not ";
+            message += "running.";
+            labelGameState.Text = message;
         }
 
         public void ShowNotification(string message)

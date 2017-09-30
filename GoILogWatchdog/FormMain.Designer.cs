@@ -288,9 +288,9 @@
             // 
             this.groupBox2.Controls.Add(this.textBoxActivity);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.groupBox2.Location = new System.Drawing.Point(3, 68);
+            this.groupBox2.Location = new System.Drawing.Point(3, 63);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(270, 164);
+            this.groupBox2.Size = new System.Drawing.Size(270, 169);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Activity";
@@ -301,9 +301,8 @@
             this.textBoxActivity.Location = new System.Drawing.Point(3, 16);
             this.textBoxActivity.Multiline = true;
             this.textBoxActivity.Name = "textBoxActivity";
-            this.textBoxActivity.ReadOnly = true;
             this.textBoxActivity.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxActivity.Size = new System.Drawing.Size(264, 145);
+            this.textBoxActivity.Size = new System.Drawing.Size(264, 150);
             this.textBoxActivity.TabIndex = 0;
             // 
             // FormMain
