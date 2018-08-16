@@ -1,5 +1,8 @@
-# Guns of Icarus Log Watchdog
-A tool that helps with saving logs for the awesome game **Guns of Icarus**.
+# Guns of Icarus Log Watchdog (Archived)
+**This is no longer being worked on and is archived.** 
+
+A tool that helps with saving logs for the awesome game **Guns of Icarus**. 
+
 
 This tool is currently a work-in-progress and does not have a release version.
 
